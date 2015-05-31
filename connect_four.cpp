@@ -79,7 +79,7 @@ void Connect_Four::handle(event ev) {
 }
 
 void Connect_Four::drop_peg(int i) {
-    int minimum=6;
+    int minimum=7;
     ///     Dropping peg
     if (!already_won) {
         for (size_t k=0;k<6;k++) {
@@ -89,27 +89,30 @@ void Connect_Four::drop_peg(int i) {
         }
         if (minimum<6) {
             pegs[i-1][minimum] = turn_of_player;
+            turn_of_player==1?turn_of_player=2:turn_of_player=1;
         }
-        turn_of_player==1?turn_of_player=2:turn_of_player=1;
     }
+    ///     Check for draw
+    _draw = true;
+    for (size_t u=7;u>0;u--) {
+        for (size_t v=6;v>0;v--) {
+            if (pegs[u][v] == 0) {
+                _draw = false;
+            }
+        }
+    }
+
     ///     Check for win
 
-    if (this->check_for_win(i-1,minimum)) {
+        cout << i-1 << "|" << minimum << endl;
+    if (this->check_for_win(i-1,minimum) && !_draw) {
+        cout << i-1 << "|" << minimum << endl;
         if (!already_won) {
             already_won = true;
             winner = pegs[i-1][minimum];
         }
     }
 
-    ///     Check for draw
-    _draw = true;
-    for (size_t u=0;u<7;u++) {
-        for (size_t v=0;v<6;v++) {
-            if (pegs[u][v] == 0) {
-                _draw = false;
-            }
-        }
-    }
     if (_draw) {
         already_won = true;
     }
@@ -135,17 +138,17 @@ bool Connect_Four::check_for_win(int a, int b) {
     int player = pegs[a][b];
     int v;
     int h;
-    for(v = a +1;pegs[v][b] == player && v <= 5;v++,vertical++);
-    for(v = a -1;pegs[v][b] == player && v >= 0;v--,vertical++);
+    for(v = a + 1;pegs[v][b] == player && v <= 5;v++,vertical++);
+    for(v = a - 1;pegs[v][b] == player && v >= 0;v--,vertical++);
     if(vertical >= 4)return true;
-    for(h = b -1;pegs[a][h] == player && h >= 0;h--,horizontal++);
-    for(h = b +1;pegs[a][h] == player && h <= 6;h++,horizontal++);
+    for(h = b - 1;pegs[a][h] == player && h >= 0;h--,horizontal++);
+    for(h = b + 1;pegs[a][h] == player && h <= 6;h++,horizontal++);
     if(horizontal >= 4) return true;
-    for(v = a -1, h= b -1;pegs[v][h] == player && v>=0 && h >=0; diagonal1 ++, v --, h --);
-    for(v = a +1, h = b+1;pegs[v][h] == player && v<=5 && h <=6;diagonal1 ++, v ++, h ++);
+    for(v = a - 1, h= b -1;pegs[v][h] == player && v>=0 && h >=0; diagonal1 ++, v --, h --);
+    for(v = a + 1, h = b+1;pegs[v][h] == player && v<=5 && h <=6;diagonal1 ++, v ++, h ++);
     if(diagonal1 >= 4) return true;
-    for(v = a -1, h= b +1;pegs[v][h] == player && v>=0 && h <= 6; diagonal2 ++, v --, h ++);
-    for(v = a +1, h= b -1;pegs[v][h] == player && v<=5 && h >=0; diagonal2 ++, v ++, h --);
+    for(v = a - 1, h= b +1;pegs[v][h] == player && v>=0 && h <= 6; diagonal2 ++, v --, h ++);
+    for(v = a + 1, h= b -1;pegs[v][h] == player && v<=5 && h >=0; diagonal2 ++, v ++, h --);
     if(diagonal2 >= 4) return true;
 
     return false;
